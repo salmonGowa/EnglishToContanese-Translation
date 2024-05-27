@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the Cantonese Word</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="mt-5">Translate the Cantonese word:</h2>
+        <div class="card mt-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ cantonese_word }}</h5>
+                <form action="/check" method="post">
+                    <div class="form-group">
+                        <label for="guess">Your Guess (in English):</label>
+                        <input type="text" class="form-control" id="guess" name="guess">
+                    </div>
+                    <input type="hidden" name="cantonese_word" value="{{ cantonese_word }}">
+                    <button type="submit" class="btn btn-primary">Check Answer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,74 @@
+
+from flask import Flask, render_template, request, jsonify
+from googletrans import Translator
+
+#importing random to enable the random selection of categories in the exercise
+from random import sample
+
+app = Flask(__name__)
+
+exercise_categories = {
+    1: ['Hello', 'Goodbye', 'How are you?', 'thank you', "you're welcome", 'excuse me', 'please', 'sorry', 'yes', 'no'],
+    2: ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'],
+    3: ['Home', 'school', 'market', 'bank', 'gas station', 'restaurant', 'work', 'airport', 'car', 'library'],
+    4: ['Tired', 'excited', 'sad', 'happy', 'angry', 'confused', 'annoyed', 'bored', 'hungry', 'jealous'],
+    5: ['Refrigerator', 'knife', 'oven', 'stove', 'pot', 'pan', 'food', 'spoon', 'fork', 'knife'],
+    6: ['Bedroom', 'office', 'computer', 'couch', 'kitchen', 'blanket', 'chair', 'table', 'light', 'closet'],
+    7: ['I', 'me', 'you', 'he', 'she', 'they', 'it', 'us', 'them', 'we']
+}
+
+
+@app.route('/exercise')
+def exercise():
+    return render_template('exercise.html', categories=exercise_categories)
+
+@app.route('/exercise/<int:category_id>', methods=['POST'])
+def start_exercise(category_id):
+    selected_category = exercise_categories.get(category_id)
+    if not selected_category:
+        return jsonify({'error': 'Invalid category ID'})
+
+    # Randomly select 5 words/phrases for the exercise
+    selected_words = sample(selected_category, 5)
+
+    # Generate questions with random choices
+    questions = []
+    for word in selected_words:
+        choices = sample(selected_category, 4)
+        if word not in choices:
+            choices.append(word)
+        question = {
+            'word': word,
+            'choices': choices
+        }
+        questions.append(question)
+
+    return render_template('exercise_questions.html', questions=questions)
+
+
+
+
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/translate', methods=['POST'])
+def translate_text():
+    text_to_translate = request.form.get('text')
+    target_language = 'zh-TW'  # Cantonese language code
+
+    if not text_to_translate:
+        return jsonify({'translation': 'Please provide valid input.'})
+
+    translator = Translator()
+    try:
+        translation = translator.translate(text_to_translate, dest=target_language).text
+    except Exception as e:
+        print(f"Translation error: {e}")
+        translation = "Unable to translate."
+
+    return jsonify({'translation': translation})
+
+if __name__ == '__main__':
+    app.run(debug=True)
