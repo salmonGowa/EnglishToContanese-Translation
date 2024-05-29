@@ -1,0 +1,6 @@
+flask
+googletrans
+google-cloud
+pyttsx3
+gTTS
+playsound
